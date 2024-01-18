@@ -6,7 +6,7 @@ short int menu();
 short int validaInt(char msg[]); 
 void calcolaAngelo(short int anno);
 void outputGigante(char *data);
-char* gaussFormula(short int m, short int n, short int anno);
+char *gaussFormula(short int m, short int n, short int anno);
 
 int main()
 {
@@ -70,6 +70,7 @@ short int validaInt(char msg[]){
          
          	printf("\n%s", msg);		
         	scanf("%hd", &dati);
+		printf("hey");
 	        while(getchar() != '\n');
 
 	}while (validato_flag != 1);
@@ -78,56 +79,60 @@ short int validaInt(char msg[]){
 }
 
 void calcolaAngelo(short int anno){
-
-        char* output = gaussFormula(24, 5, anno);
-        printf("%s", output);
-
-	outputGigante(gaussFormula(24,5,anno));
+        char *output; 
+        output = gaussFormula(24,5,anno);
+	printf("%d", output[0]);	
+	 
+/*	outputGigante(gaussFormula(24,5,anno));
+	printf("\n\n");
 	outputGigante(gaussFormula(15, 6, anno));
-               
+*/
+        free(output);      
 	
 
 }
 
-void outputGigante(char *data){
-       
+void outputGigante(char dataaaa[]){
+printf("aa");       
 	FILE* bitmap = fopen("8x5.bin", "rb");
         int data_gigante[6][5];
-	short int i,j,b, pixel;
-        
-
+	short int j,b, pixel;
+	short int i = 0;
+        printf("out");         
 	if(bitmap){
-            
-               for(i = 0; i < 2; i++){
-                  fseek(bitmap, (data[i] - 48)*5*sizeof(int), SEEK_SET);
-                  fread(data_gigante[i], sizeof(int), 5, bitmap); 
-	       }
+               
+		while(dataaaa[i] != 32 ){
+			fseek(bitmap, (dataaaa[i])*5*sizeof(int), SEEK_SET);
+                  	fread(data_gigante[i], sizeof(int), 5, bitmap);
+		  	i++;
+		}            
+               
 
                fseek(bitmap, 50, SEEK_SET);
-	       fread(data_gigante[2], sizeof(int), 5, bitmap);
+	       fread(data_gigante[i], sizeof(int), 5, bitmap);
 
-		if(data[1] == '3'){
+		if(dataaaa[2] == 3){
 
 			fseek(bitmap, 60 * sizeof(int), SEEK_SET);
-			fread(data_gigante[3], sizeof(int), 5, bitmap);
+			fread(data_gigante[2], sizeof(int), 5, bitmap);
 			fseek(bitmap, 55 *sizeof(int), SEEK_SET);
-			fread(data_gigante[4], sizeof(int), 5, bitmap);
+			fread(data_gigante[3], sizeof(int), 5, bitmap);
 			fseek(bitmap, 70 * sizeof(int),SEEK_SET);
-			fread(data_gigante[5], sizeof(int), 5, bitmap);
+			fread(data_gigante[4], sizeof(int), 5, bitmap);
 			
 
 		}else{
 
                         fseek(bitmap, 55 * sizeof(int), SEEK_SET);
-			fread(data_gigante[3], sizeof(int), 5, bitmap);
+			fread(data_gigante[2], sizeof(int), 5, bitmap);
 			fseek(bitmap, 65 * sizeof(int), SEEK_SET);
-			fread(data_gigante[4], sizeof(int), 5, bitmap);
+			fread(data_gigante[3], sizeof(int), 5, bitmap);
 			fseek(bitmap, 70 * sizeof(int), SEEK_SET);
-			fread(data_gigante[5], sizeof(int), 5, bitmap);
+			fread(data_gigante[4], sizeof(int), 5, bitmap);
                       
 		}
 
-									/*stampa effettiva dei caratteri giganti*/            
+									          
                for (i = 0; i < 5; i++){
 
 
@@ -151,21 +156,25 @@ void outputGigante(char *data){
 		printf("errore");
 	}
 
+fclose(bitmap);
+
 }
 
 
-char* gaussFormula(short int m, short int n, short int anno) {
+char *gaussFormula(short int m, short int n, short int anno) {
 
 	short int a, b, c, d, e, mese, giorno;
         char angelo[7];
 	char mese_str[3];
-	char date_str[4];
-
+	char date_str[3];
+	char *ris = malloc(5 * sizeof(char));
+        int i;        
+              
 	a = anno % 19;
 	b = anno % 4;
 	c = anno % 7;
 
-	d = (19 * a + m) % 30;
+	d = ((19 * a) + m) % 30;
 	e = ((2 * b) + (4 * c) + (6 * d) + n) % 7;
 
 	if ((d + e) < 10){
@@ -194,13 +203,23 @@ char* gaussFormula(short int m, short int n, short int anno) {
 	}
 
 }	
-        sprintf(mese_str, " %hd", mese);
+//        date_str =  malloc(4 * sizeof(char));	
+        sprintf(mese_str, "%hd", mese);
 	sprintf(date_str, "%hd", giorno + 1);
-	strcat(date_str, mese_str);
-        printf("%s", date_str);
-        return date_str;	
+	ris = strcat(date_str, mese_str);
+	printf("\n\n%s %ld\n\n", ris, strlen(ris));
+		
+
+	for(i=0; i<5; i++){
+	
+			ris[i] = ris[i] - 48;
+		printf("aaaa");
+        printf("%d - ", date_str[i]);
+	}
+//printf("\n %ld", strlen(date_str));
+
+        return ris;	
 
 }
-
 
 
