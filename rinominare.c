@@ -1,17 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
+
+
+void bootstrap();
 short int menu();
 short int validaInt(char msg[]); 
 void calcolaAngelo(short int anno);
 void outputGigante(char *data);
 char *gaussFormula(short int m, short int n, short int anno);
 
+#define ULTIMA_REV "18/01/24"
+#define OUTPUT_CHAR '#'
+#define FONT_FILE "8x5.bin"
+
+
+
 int main()
 {
 
 	short int scelta, anno;
+
+	bootstrap();
         do{
 
 	scelta = menu();
@@ -26,37 +38,61 @@ int main()
 			calcolaAngelo(anno);
 			break;
 
+		case 2: 
+			
+			printf("\n\n>INFORMAZIONI SUL SOFTWARE: il seguente applicativo ha la pretesa di computare la data del giorno dell'angelo, secondo il calendario gregoriano \n\t\t\t    e giuliano. Per raggiungere tale scopo, si sfrutta la formula di Gauss, teorizzata nella meta' del XX secolo.  Gli anni\n\t\t\t    sono quelli intercorrenti tra il XX ed il XXI secolo. L'output delle due date computate, è effettuato attraverso l'utilizzo\n\t\t\t    di caratteri giganti composti da caratteri ASCII (%c), le cui fattezze sono espresse in un file separato, in modo da facilitare\n\t\t\t    eventuali manovre di manutenzione.  \n\n----------------------------------------------------------\n\nSviluppato da Trani e Leone, Universita' degli studi di Urbino - INFORMATICA APPLICATA (L31),\n dipartimento delle scienze pure e applicate, A.A 2023-2024\n\n", OUTPUT_CHAR);
+			break;
+                      
+
 
 	}
        } while(scelta != 0);
 }
+
+void bootstrap(){
+
+
+printf("\n\n      |V|          '||'                                     '||   ||      |                              '||                 -=-      \n");
+printf("   .::| |::.        ||       ... ...  .. ...     ....     .. ||  ...     |||    .. ...     ... .   ....   ||    ...       (\  _  /)   \n");
+printf("  ::__| |__::       ||        ||  ||   ||  ||  .|...||  .'  '||   ||    |  ||    ||  ||   || ||  .|...||  ||  .|  '|.     ( \( )/ )   \n");
+printf(" >____   ____<      ||        ||  ||   ||  ||  ||       |.   ||   ||   .''''|.   ||  ||    |''   ||       ||  ||   ||     (       )   \n");
+printf("  ::  | |  ::      .||.....|  '|..'|. .||. ||.  '|...'  '|..'||. .||. .|.  .||. .||. ||.  '||||.  '|...' .||. '|..|'       `>   <'    \n");
+printf("   '::| |::'                                                                                   .|....'                     /     \    \n");            
+printf("      | |          ##################################################################################################      `-._.-'    \n");
+printf("      | |          ##################################################################################################                 \n");
+printf("      |A|                                                                                                                             \n\n");
+
+printf("------------------- Software per il calcolo del giorno dell'angelo tra il XX e il XXI secolo. Ultima revisione: %s. ------------------\n", ULTIMA_REV);
+
+if(access(FONT_FILE, R_OK) == -1){
+
+	printf("> ERRORE: il file \"%s\" risulta danneggiato o assente. Si procede con il ripristino automatico della risorsa ai valori originali", FONT_FILE);
+	system("./genera_bmpf");
+	printf("\n> Risorsa caricata correttamente");
+}
+
+
+}
+
+
+
 
 
 short int menu(){
 
 	short int opt;
         
-	printf("    |V|     \n");
-	printf(" .::| |::.  \n");
-	printf("::__| |__:: \n");
-	printf(">___   ___< \n");
-	printf("::  | |  :: \n");
-	printf(" '::| | ::' \n");
-	printf("    | |     \n");
-	printf("    | |     \n");
-	printf("    |A|     \n\n\n");
-
-
-	printf("<Software per il calcolo del lunedì dell'angelo tra il XX e XXI secolo.>\n\n\n<- Sviluppato da Trani e Leone (Uniurb, Dipartimento delle scienze pure ed applicate L-31, A.A 2023-24.>\n\n");
-	printf("-----------------------------------------------------------------\n");
+	
+	printf("\n-----------------------------------------------------------------\n");
         printf("<1> Ricerca del giorno dell'angelo per data (1900 -2099)\n");
+	printf("<2> informazioni sul software\n");
 	printf("<0> Uscita dal software\n----------------------------------------------------------\n\n");
         
 	do{
 
 	    opt = validaInt("   --> Inserire il numero corrispondente all'operazione desiderata:");	
 	
-	}while ((opt > 1)||(opt < 0));
+	}while ((opt > 2)||(opt < 0));
 
         return opt;
 
@@ -91,64 +127,57 @@ void calcolaAngelo(short int anno){
 
 }
 
-void outputGigante(char dataaaa[]){
+void outputGigante(char data_lun_angelo[]){
        
 	FILE* bitmap = fopen("8x5.bin", "rb");
         int data_gigante[6][5];
+	short int apr[3] = {11, 13, 14};
+	short int mar[3] = {12, 11, 14};
 	short int j,b, pixel;
         int i = 0;
                  
 	if(bitmap){
                
-
-
-
-
-
-		
-		
-			if( strlen(dataaaa) == 2 ){
-			  fseek(bitmap, 0, SEEK_SET);
-			  fread(data_gigante[0], sizeof(int), 5, bitmap);
-			  fseek(bitmap, (dataaaa[0])*5*sizeof(int), SEEK_SET);
-		          fread(data_gigante[1], sizeof(int), 5, bitmap);
-			  i++;
+			if ( i <  2){
+                
+					if( strlen(data_lun_angelo) == 2 ){
+			  			fseek(bitmap, 0, SEEK_SET);
+			  			fread(data_gigante[0], sizeof(int), 5, bitmap);
+					  	fseek(bitmap, (data_lun_angelo[0])*5*sizeof(int), SEEK_SET);
+		         			fread(data_gigante[1], sizeof(int), 5, bitmap);
+			 		 	i = i + 2;
 			}else{  	
 		
-			fseek(bitmap, (dataaaa[0])*5*sizeof(int), SEEK_SET);
-                	fread(data_gigante[0], sizeof(int), 5, bitmap);
+				fseek(bitmap, (data_lun_angelo[0])*5*sizeof(int), SEEK_SET);
+                		fread(data_gigante[0], sizeof(int), 5, bitmap);
 			
-			fseek(bitmap, (dataaaa[1])*5*sizeof(int), SEEK_SET);
-                	fread(data_gigante[1], sizeof(int), 5, bitmap);
+				fseek(bitmap, (data_lun_angelo[1])*5*sizeof(int), SEEK_SET);
+                			fread(data_gigante[1], sizeof(int), 5, bitmap);
 			            
-               }
-
+              				 }
+				
+    
+			}
+					
+					
                fseek(bitmap, 50, SEEK_SET);
 	       fread(data_gigante[2], sizeof(int), 5, bitmap);
 		i++;
-		if(dataaaa[strlen(dataaaa) - 1] == 3){
-
-			fseek(bitmap, 60 * sizeof(int), SEEK_SET);
-			fread(data_gigante[3], sizeof(int), 5, bitmap);
-			i++;
-			fseek(bitmap, 55 *sizeof(int), SEEK_SET);
-			fread(data_gigante[4], sizeof(int), 5, bitmap);
-			i++;
-			fseek(bitmap, 70 * sizeof(int),SEEK_SET);
-			fread(data_gigante[5], sizeof(int), 5, bitmap);
-			i++;
-
+		if(data_lun_angelo[strlen(data_lun_angelo) - 1] == 3){
+                      
+			for (i = 0; i < 3; i++){
+				
+			   fseek(bitmap, mar[i] * 5 * sizeof(int), SEEK_SET);
+			   fread(data_gigante[3 + i], sizeof(int), 5, bitmap);
+			}
+			
 		}else{
 
-                        fseek(bitmap, 55 * sizeof(int), SEEK_SET);
-			fread(data_gigante[3], sizeof(int), 5, bitmap);
-			i++;
-			fseek(bitmap, 65 * sizeof(int), SEEK_SET);
-			fread(data_gigante[4], sizeof(int), 5, bitmap);
-			i++;
-			fseek(bitmap, 70 * sizeof(int), SEEK_SET);
-			fread(data_gigante[5], sizeof(int), 5, bitmap);
-			i++;
+			for (i = 0; i < 3; i++){
+			  fseek(bitmap, apr[i] * 5 * sizeof(int), SEEK_SET);
+			  fread(data_gigante[3 +i ], sizeof(int), 5, bitmap);
+			}
+                      
                       
 		}
 
@@ -161,7 +190,7 @@ void outputGigante(char dataaaa[]){
 			       for(b = 0; b < 8; b++){
 					
 			       		pixel = data_gigante[j][i] & 1 << 7-b;   //and logico del bit esaminato attraverso shift binario
-					printf("%c", pixel ? '*' : ' ');		
+					printf("%c", pixel ? OUTPUT_CHAR : ' ');		
 
 			       }
 
@@ -175,7 +204,7 @@ void outputGigante(char dataaaa[]){
 	}else{
 		printf("errore");
 	}  
-free(dataaaa);
+free(data_lun_angelo);
 fclose(bitmap);
 
 }
@@ -184,7 +213,6 @@ fclose(bitmap);
 char *gaussFormula(short int m, short int n, short int anno) {
 
 	short int a, b, c, d, e, mese, giorno;
-        char angelo[7];
 	char mese_str[3];
 	char date_str[3];
 	char *ris = malloc(5 * sizeof(char));
