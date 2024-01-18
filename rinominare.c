@@ -47,7 +47,7 @@ short int menu(){
 	printf("    |A|     \n\n\n");
 
 
-	printf("<Software per il calcolo del lunedì dell'angelo tra il XX e XXI secolo.>\n\n\n<- Sviluppato da Cosimo e Leone (Uniurb, Dipartimento delle scienze pure ed applicate L-31, A.A 2023-24.>\n\n");
+	printf("<Software per il calcolo del lunedì dell'angelo tra il XX e XXI secolo.>\n\n\n<- Sviluppato da Trani e Leone (Uniurb, Dipartimento delle scienze pure ed applicate L-31, A.A 2023-24.>\n\n");
 	printf("-----------------------------------------------------------------\n");
         printf("<1> Ricerca del giorno dell'angelo per data (1900 -2099)\n");
 	printf("<0> Uscita dal software\n----------------------------------------------------------\n\n");
@@ -65,12 +65,12 @@ short int menu(){
 short int validaInt(char msg[]){
 
 	short int dati;
-	short int  validato_flag = 1;
+	short int  validato_flag;
 	do{
          
          	printf("\n%s", msg);		
-        	scanf("%hd", &dati);
-		printf("hey");
+        	validato_flag = scanf("%hd", &dati);
+		
 	        while(getchar() != '\n');
 
 	}while (validato_flag != 1);
@@ -79,56 +79,76 @@ short int validaInt(char msg[]){
 }
 
 void calcolaAngelo(short int anno){
-        char *output; 
-        output = gaussFormula(24,5,anno);
-	printf("%d", output[0]);	
-	 
-/*	outputGigante(gaussFormula(24,5,anno));
-	printf("\n\n");
+        
+     
+	
+        printf("\n > Giorno dell'angelo dell'anno %hd, calendario gregoriano: \n\n", anno);	 
+	outputGigante(gaussFormula(24, 5, anno));
+	printf("----------------------------------------------------\n\n > Giorno dell'angelo dell'anno %hd, calendario giuliano \n\n", anno);
 	outputGigante(gaussFormula(15, 6, anno));
-*/
-        free(output);      
+	      
 	
 
 }
 
 void outputGigante(char dataaaa[]){
-printf("aa");       
+       
 	FILE* bitmap = fopen("8x5.bin", "rb");
         int data_gigante[6][5];
 	short int j,b, pixel;
-	short int i = 0;
-        printf("out");         
+        int i = 0;
+                 
 	if(bitmap){
                
-		while(dataaaa[i] != 32 ){
-			fseek(bitmap, (dataaaa[i])*5*sizeof(int), SEEK_SET);
-                  	fread(data_gigante[i], sizeof(int), 5, bitmap);
-		  	i++;
-		}            
-               
+
+
+
+
+
+		
+		
+			if( strlen(dataaaa) == 2 ){
+			  fseek(bitmap, 0, SEEK_SET);
+			  fread(data_gigante[0], sizeof(int), 5, bitmap);
+			  fseek(bitmap, (dataaaa[0])*5*sizeof(int), SEEK_SET);
+		          fread(data_gigante[1], sizeof(int), 5, bitmap);
+			  i++;
+			}else{  	
+		
+			fseek(bitmap, (dataaaa[0])*5*sizeof(int), SEEK_SET);
+                	fread(data_gigante[0], sizeof(int), 5, bitmap);
+			
+			fseek(bitmap, (dataaaa[1])*5*sizeof(int), SEEK_SET);
+                	fread(data_gigante[1], sizeof(int), 5, bitmap);
+			            
+               }
 
                fseek(bitmap, 50, SEEK_SET);
-	       fread(data_gigante[i], sizeof(int), 5, bitmap);
-
-		if(dataaaa[2] == 3){
+	       fread(data_gigante[2], sizeof(int), 5, bitmap);
+		i++;
+		if(dataaaa[strlen(dataaaa) - 1] == 3){
 
 			fseek(bitmap, 60 * sizeof(int), SEEK_SET);
-			fread(data_gigante[2], sizeof(int), 5, bitmap);
-			fseek(bitmap, 55 *sizeof(int), SEEK_SET);
 			fread(data_gigante[3], sizeof(int), 5, bitmap);
-			fseek(bitmap, 70 * sizeof(int),SEEK_SET);
+			i++;
+			fseek(bitmap, 55 *sizeof(int), SEEK_SET);
 			fread(data_gigante[4], sizeof(int), 5, bitmap);
-			
+			i++;
+			fseek(bitmap, 70 * sizeof(int),SEEK_SET);
+			fread(data_gigante[5], sizeof(int), 5, bitmap);
+			i++;
 
 		}else{
 
                         fseek(bitmap, 55 * sizeof(int), SEEK_SET);
-			fread(data_gigante[2], sizeof(int), 5, bitmap);
-			fseek(bitmap, 65 * sizeof(int), SEEK_SET);
 			fread(data_gigante[3], sizeof(int), 5, bitmap);
-			fseek(bitmap, 70 * sizeof(int), SEEK_SET);
+			i++;
+			fseek(bitmap, 65 * sizeof(int), SEEK_SET);
 			fread(data_gigante[4], sizeof(int), 5, bitmap);
+			i++;
+			fseek(bitmap, 70 * sizeof(int), SEEK_SET);
+			fread(data_gigante[5], sizeof(int), 5, bitmap);
+			i++;
                       
 		}
 
@@ -154,8 +174,8 @@ printf("aa");
 
 	}else{
 		printf("errore");
-	}
-
+	}  
+free(dataaaa);
 fclose(bitmap);
 
 }
@@ -203,21 +223,20 @@ char *gaussFormula(short int m, short int n, short int anno) {
 	}
 
 }	
-//        date_str =  malloc(4 * sizeof(char));	
+
         sprintf(mese_str, "%hd", mese);
 	sprintf(date_str, "%hd", giorno + 1);
-	ris = strcat(date_str, mese_str);
-	printf("\n\n%s %ld\n\n", ris, strlen(ris));
-		
+	strcpy(ris, date_str);
+	strcat(ris, mese_str);
 
-	for(i=0; i<5; i++){
+	for(i=0; i<strlen(ris); i++){
 	
 			ris[i] = ris[i] - 48;
-		printf("aaaa");
-        printf("%d - ", date_str[i]);
+	        	
+        
 	}
-//printf("\n %ld", strlen(date_str));
 
+        
         return ris;	
 
 }
